@@ -19,16 +19,11 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
       - name: Run Clair V4
-        uses: quay/clair-action@main
+        uses: crozzy/clair-action@main
         with:
           image-ref: quay.io/crozzy/quay-test:v3.4.7-15
           format: sarif
           output: clair_results.sarif
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: sarif
-          path: clair_results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
