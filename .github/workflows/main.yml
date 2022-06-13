@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    branches:
+      - 'main'
+jobs:
+  docker-pull-vulns:
+    name: "Docker Pull and get vulns"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Docker Quay.io login
+        uses: docker/login-action@v2
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_ROBOT_TOKEN }}
+      - name: Run Clair V4
+        uses: quay/clair-action@main
+        with:
+          image-ref: quay.io/crozzy/quay-test:v3.4.7-15
+          format: sarif
+          output: clair_results.sarif
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: sarif
+          path: clair_results.sarif
+      - name: Upload sarif
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: clair_results.sarif
