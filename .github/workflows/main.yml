@@ -19,7 +19,7 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
       - name: Run Clair V4
-        uses: crozzy/clair-action@main
+        uses: crozzy/clair-action@auth_debug
         with:
           image-ref: quay.io/crozzy/quay-test:v3.4.7-15
           format: sarif
