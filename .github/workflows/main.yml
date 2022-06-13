@@ -12,18 +12,22 @@ jobs:
     name: "Docker Pull and get vulns"
     runs-on: ubuntu-latest
     steps:
-      - name: Docker Quay.io login
+      - name: Docker login
         uses: docker/login-action@v2
         with:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
+      - name: Copy config
+        run: |
+          cp ${HOME}/.docker/config.json config.json
       - name: Run Clair V4
-        uses: crozzy/clair-action@auth_debug
+        uses: quay/clair-action@main
         with:
           image-ref: quay.io/crozzy/quay-test:v3.4.7-15
           format: sarif
           output: clair_results.sarif
+          docker-config-dir: /
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
